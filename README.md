@@ -1,11 +1,11 @@
-Poetry in Motion (`PIM`)
+`PIM`: Poetry in Motion 
 ================
 
 `PIM` is my own endeavor to learn low-level programming and develop a [kernel] or [operating system].
 
 This is entirely for the purpose of experimentation and education; I'll be following along with a lot of information offered by [OSDev.org] and I plan on learning some tips and tricks by looking at the [StewieOS] project, developed by a good friend of mine.
 
-For the time being, I'll use this `README.md` page to archive a list of pages that I would like to read more about through [OSDev.org]. 
+For the time being, I'll use this [`README.md`](README.md) page to archive a list of pages that I would like to read more about through [OSDev.org]. 
 
 
 --------
@@ -16,7 +16,12 @@ Current Page:
 __[GCC Cross-Compiler](http://wiki.osdev.org/GCC_Cross-Compiler)__
 
 
+--------
 
+Ordered Steps:
+--------------
+
+1. [Build newest version](build_gcc/) of [`gcc`][gcc].
 
 --------
 
@@ -27,8 +32,9 @@ More Readings to do...
 * [GDB](http://wiki.osdev.org/GDB)
 * [Assembly](http://wiki.osdev.org/Assembly)
 * [Books](http://wiki.osdev.org/Books)
-
-
+* [Why do I need a Cross Compiler?](http://wiki.osdev.org/Why_do_I_need_a_Cross_Compiler%3F)
+* [Building GCC](http://wiki.osdev.org/Building_GCC)
+* [GCC](http://wiki.osdev.org/GCC)
 
 
 
@@ -36,3 +42,4 @@ More Readings to do...
 [operating system]: https://en.wikipedia.org/wiki/Operating_system
 [OSDev.org]: http://osdev.org 
 [StewieOS]: https://github.com/Caleb1994/StewieOS
+[GCC]: https://gcc.gnu.org/

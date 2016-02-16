@@ -21,7 +21,8 @@ __[GCC Cross-Compiler](http://wiki.osdev.org/GCC_Cross-Compiler)__
 Ordered Steps:
 --------------
 
-1. [Build newest version](build_gcc/) of [`gcc`][gcc].
+1. [Build newest version](build_new_gcc/) of [`gcc`][gcc].
+2. [Create a new gcc cross compiler](gcc_cross_compiler/).
 
 --------
 
@@ -35,6 +36,11 @@ More Readings to do...
 * [Why do I need a Cross Compiler?](http://wiki.osdev.org/Why_do_I_need_a_Cross_Compiler%3F)
 * [Building GCC](http://wiki.osdev.org/Building_GCC)
 * [GCC](http://wiki.osdev.org/GCC)
+* [Getting Started](http://wiki.osdev.org/Getting_Started)
+* [Bare Bones](http://wiki.osdev.org/Bare_Bones)
+* [Boot Sequence](http://wiki.osdev.org/Boot_Sequence)
+* [Tutorials](http://wiki.osdev.org/Tutorials)
+* [What order should I make things in?](http://wiki.osdev.org/What_order_should_I_make_things_in)
 
 
 

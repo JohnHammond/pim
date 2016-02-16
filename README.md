@@ -8,6 +8,8 @@ This is entirely for the purpose of experimentation and education; I'll be follo
 For the time being, I'll use this [`README.md`](README.md) page to archive a list of pages that I would like to read more about through [OSDev.org]. 
 
 
+__Status:__ currently the `gcc_cross_compiler` setup script is working and it will build the cross compiler; but the script should cleaned up. Then we can move on to actually writing the kernel.
+
 --------
 
 Current Page:

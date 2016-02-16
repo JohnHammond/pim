@@ -15,7 +15,7 @@ So all the technical work is in the [build script](build_new_binutils.sh) that I
 
 __The only worthwhile note with that script is that `PREFIX` variable is the same as the `gcc-5.3.0` path, because they should both be installed in the same place and be essentially intertwined together__
 
-There are no necessary dependencies to run the script.
+There are no necessary dependencies to run the script. However, you should run the [`build_new_gcc`](../build_new_gcc/) first (before this one) to actually get the [`gcc`][gcc] folder and compiler ready as necessary.
 
 [kernel]: https://en.wikipedia.org/wiki/Kernel_%28operating_system%29
 [operating system]: https://en.wikipedia.org/wiki/Operating_system

@@ -38,7 +38,6 @@ function prepare_directories(){
 	echo "$0: ${GREEN}Making and moving into an /opt/ folder in your home directory..${NC}"
 
 	mkdir -p $HOME/opt/build-gcc || panic
-	mkdir -p $HOME/opt/src || panic
 
 	cd $HOME/opt
 }
@@ -64,10 +63,7 @@ function build_gcc(){
 	../gcc-5.3.0/configure --prefix="$PREFIX" --disable-nls --enable-languages=c,c++ || panic
 
 	# --disable-nls tells binutils not not include native language support. This is basically optional, but reduces dependencies and compile time. It will also result in English-language diagnostics, 
-
 	# --enable-languages tells GCC to not to compile all the other language frontends it supports, but only C (and optionally C++).
-
-	# --disable-bootstrap tells the compiler to not bootstrap itself against the current system compiler. This results in a much quicker compilation, but if the current and the new compiler differ too much in version, you will get a less robust compiler or weird errors. 
 
 
 	# I use -j8 to use 8 threads; make it go a lot faster than just 1 thread!

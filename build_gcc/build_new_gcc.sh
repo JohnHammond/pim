@@ -14,10 +14,23 @@ RED=`tput setaf 1`							# code for red console text
 GREEN=`tput setaf 2`						# code for green text
 NC=`tput sgr0`								# Reset the text color
 
+# Dependencies variables...
+DEPENDENCIES="libgmp3-dev libmpfr-dev libmpc-dev"
+
+function install_dependencies(){
+
+	echo "$0: ${GREEN}Downloading all necessary dependencies...${NC}"
+	echo "$0: ${GREEN}Please supply your password for sudo if you haven't already.${NC}"
+
+	sudo apt-get update || panic
+	sudo apt-get install $DEPENDENCIES || panic
+
+}
+
 function download_gcc_source(){
 
 	echo "$0: ${GREEN}Downloading gcc_5.3.0 source package...${NC}"
-	wget "ftp://mirrors-usa.go-parts.com/gcc/releases/gcc-5.3.0/gcc-5.3.0.tar.gz" || panic
+	wget -nc "ftp://mirrors-usa.go-parts.com/gcc/releases/gcc-5.3.0/gcc-5.3.0.tar.gz" || panic
 }
 
 function prepare_directories(){
@@ -68,6 +81,7 @@ function main()
 {
 	echo "$0: ${GREEN}Preparing to build gcc 5.3.0!${NC}"
 	
+	install_dependencies
 	prepare_directories
 	download_gcc_source
 	extract_gcc

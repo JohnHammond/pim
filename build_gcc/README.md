@@ -44,6 +44,25 @@ make install
 
 I've tried to put this all in a [simple script](build_new_gcc.sh) that does this all in a logical fashion. It is hopefully a little cleaner and should do everything necessary, but you can walk through what does what in [the guiding article](http://wiki.osdev.org/Building_GCC)
 
+-----
+
+After trying to run the script, I got an error initially:
+
+```
+Building GCC requires GMP 4.2+, MPFR 2.4.0+ and MPC 0.8.0+.
+Try the --with-gmp, --with-mpfr and/or --with-mpc options to specify
+their locations.  Source code for these libraries can be found at
+their respective hosting sites as well as at
+ftp://gcc.gnu.org/pub/gcc/infrastructure/.  See also
+http://gcc.gnu.org/install/prerequisites.html for additional info.  If
+you obtained GMP, MPFR and/or MPC from a vendor distribution package,
+make sure that you have installed both the libraries and the header
+files.  They may be located in separate packages.
+./build_new_gcc.sh: fatal error
+```
+
+I had forgotten the dependencies (I didn't actually _forget_ them, I just chose to ignore them because I figured (hoped) they would already be on my box) so I added them to my script. 
+
 
 
 [kernel]: https://en.wikipedia.org/wiki/Kernel_%28operating_system%29

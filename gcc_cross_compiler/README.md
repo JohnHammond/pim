@@ -7,9 +7,9 @@ I understand the most necessary thing to start with to build your own [operating
 
 Currently I am trying to go through the [Bare Bones] tutorial, which uses `i686_elf` as the target platform. 
 
-I intend on adapting the code I wrote to build a new 5.3.0 version of [`gcc`][gcc] to prepare and build the [cross-compiler].
-
 Because of that, try and run the scripts to [`build_new_gcc`](../build_new_gcc/) and [`build_new_binutils`](build_new_binutils/) before you run this script to build the [cross-compiler].
+
+__May 8th, 2016: The [script](build_cross_compiler.sh) for the [cross-compiler] is in working condition.__
 
 [kernel]: https://en.wikipedia.org/wiki/Kernel_%28operating_system%29
 [operating system]: https://en.wikipedia.org/wiki/Operating_system

@@ -3,7 +3,7 @@
 
 Part of the first step in preparing to make a [cross-compiler] for the [operating system] I was hoping to make was having the latest and greatest renditions of [`gcc`][gcc] and [`binutils`][binutils].
 
-I modified the current [`build_new_gcc.sh`](../build_new_gcc/) script that I wrote to easily set up the newest version of [`binutils`][binutils] (currently version 2.26).
+I modified the current [`build_new_gcc.sh`](../build_new_gcc/) script that I wrote to easily set up the newest version of [`binutils`][binutils], that it will find and download.
 
 I was currently running version 2.25, which you could find by 
 
@@ -11,9 +11,9 @@ I was currently running version 2.25, which you could find by
 ld -version
 ```
 
-So all the technical work is in the [build script](build_new_binutils.sh) that I wrote to download and buidl version 2.26 of [`binutils`][binutils]. It should do everything necessary, but you can walk through what does what in [the guiding article](http://wiki.osdev.org/Building_GCC) and look at the script yourself.
+So all the technical work is in the [build script](build_new_binutils.sh). It should do everything necessary, but you can walk through what does what in [the guiding article](http://wiki.osdev.org/Building_GCC) and look at the script yourself.
 
-__The only worthwhile note with that script is that `PREFIX` variable is the same as the `gcc-5.3.0` path, because they should both be installed in the same place and be essentially intertwined together__
+__The only worthwhile note with that script is that `PREFIX` variable is the same as the `gcc` path, because they should both be installed in the same place and be essentially intertwined together__
 
 There are no necessary dependencies to run the script. However, you should run the [`build_new_gcc`](../build_new_gcc/) first (before this one) to actually get the [`gcc`][gcc] folder and compiler ready as necessary.
 

@@ -2,7 +2,7 @@
 # Author: John Hammond
 # Date: 15FEB16
 # Description:
-#    build_new_gcc_5.3.0.sh will automate the process of grabbing gcc_5.3.0 and building it in your home directory's /opt folder.
+#    build_new_gcc.sh will automate the process of grabbing the latest GCC and building it in your home directory's /opt folder.
 #    
 #     Instructions
 #
@@ -15,12 +15,12 @@ GREEN=`tput setaf 2`						# code for green text
 NC=`tput sgr0`								# Reset the text color
 
 # Dependencies variables...
-DEPENDENCIES="libgmp3-dev libmpfr-dev libmpc-dev"
+DEPENDENCIES="libgmp3-dev libmpfr-dev libmpc-dev gcc-multilib"
 
 function install_dependencies(){
 
-	echo "$0: ${GREEN}Downloading all necessary dependencies...${NC}"
-	echo "$0: ${GREEN}Please supply your password for sudo if you haven't already.${NC}"
+	echo "$FUNCNAME: ${GREEN}Downloading all necessary dependencies...${NC}"
+	echo "$FUNCNAME: ${GREEN}Please supply your password for sudo if you haven't already.${NC}"
 
 	sudo apt-get update || panic
 	sudo apt-get install $DEPENDENCIES || panic
@@ -29,13 +29,13 @@ function install_dependencies(){
 
 function download_gcc_source(){
 
-	echo "$0: ${GREEN}Downloading gcc_5.3.0 source package...${NC}"
-	wget -nc "ftp://mirrors-usa.go-parts.com/gcc/releases/gcc-5.3.0/gcc-5.3.0.tar.gz" || panic
+	echo "$FUNCNAME: ${GREEN}Downloading $GCC_VERSION source package...${NC}"
+	wget -nc "$GCC_URL/$GCC_VERSION.tar.gz" || panic
 }
 
 function prepare_directories(){
 
-	echo "$0: ${GREEN}Making and moving into an /opt/ folder in your home directory..${NC}"
+	echo "$FUNCNAME: ${GREEN}Making and moving into an /opt/ folder in your home directory..${NC}"
 
 	mkdir -p $HOME/opt/build-gcc || panic
 
@@ -44,23 +44,23 @@ function prepare_directories(){
 
 function extract_gcc(){
 
-	echo "$0: ${GREEN}Extracting the gcc source package ... ${NC}"
+	echo "$FUNCNAME: ${GREEN}Extracting the gcc source package ... ${NC}"
 	
-	if [ ! -d "gcc-5.3.0" ]; then
-		gunzip gcc-5.3.0.tar.gz || panic
-		tar xfv gcc-5.3.0.tar || panic
+	if [ ! -d "$GCC_VERSION" ]; then
+		gunzip $GCC_VERSION.tar.gz || panic
+		tar xfv $GCC_VERSION.tar || panic
 	fi
 }
 
 function build_gcc(){
 
-	echo "$0: ${GREEN}Beginning to build gcc... ${NC}"
-	echo "$0: ${GREEN} This is going to take a while. Get comfortable! :D ${NC}"
+	echo "$FUNCNAME: ${GREEN}Beginning to build gcc... ${NC}"
+	echo "$FUNCNAME: ${GREEN} This is going to take a while. Get comfortable! :D ${NC}"
 	
-	export PREFIX="$HOME/opt/gcc-5.3.0"
+	export PREFIX="$HOME/opt/$GCC_VERSION"
 	
 	cd build-gcc || panic
-	../gcc-5.3.0/configure --prefix="$PREFIX" --disable-nls --enable-languages=c,c++ || panic
+	../$GCC_VERSION/configure --prefix="$PREFIX" --disable-nls --enable-languages=c,c++ --enable-multilib || panic 
 
 	# --disable-nls tells binutils not not include native language support. This is basically optional, but reduces dependencies and compile time. It will also result in English-language diagnostics, 
 	# --enable-languages tells GCC to not to compile all the other language frontends it supports, but only C (and optionally C++).
@@ -73,15 +73,26 @@ function build_gcc(){
 
 function add_gcc_to_path(){
 
-	echo "$0: ${GREEN}Now adding gcc 5.3.0 to the PATH... ${NC}"
-	export PATH="$HOME/opt/gcc-5.3.0/bin:$PATH"
-	echo 'export PATH="$HOME/opt/gcc-5.3.0/bin:$PATH"' >> ~/.bashrc
+	echo "$FUNCNAME: ${GREEN}Now adding $GCC_VERSION to the PATH... ${NC}"
+	export PATH="$HOME/opt/$GCC_VERSION/bin:$PATH"
+	echo "export PATH=$HOME/opt/$GCC_VERSION/bin:$PATH" >> ~/.bashrc
+}
+
+function determine_latest_gcc_version(){
+
+	echo "$FUNCNAME: ${GREEN}Determining the latest GCC version... ${NC}"
+	GCC_URL=`lynx --dump "http://mirrors-usa.go-parts.com/gcc/releases/"|tail -n 1|awk '{print $2}'`
+	GCC_VERSION=`echo $GCC_URL|rev|cut -d "/" -f2|rev`
+	echo "$FUNCNAME: ${GREEN}Latest GCC version found to be $GCC_VERSION!${NC}"
 }
 
 function main()
 {
-	echo "$0: ${GREEN}Preparing to build gcc 5.3.0!${NC}"
-	
+
+	determine_latest_gcc_version
+
+	echo "$FUNCNAME: ${GREEN}Preparing to build $GCC_VERSION!${NC}"
+
 	install_dependencies
 	prepare_directories
 	download_gcc_source
@@ -90,7 +101,7 @@ function main()
 
 	add_gcc_to_path
 
-	echo "$0: ${GREEN}GCC successfully built!${NC}"
+	echo "$FUNCNAME: ${GREEN}GCC successfully built!${NC}"
 
 	exit 0
 }
@@ -103,11 +114,9 @@ function main()
 # 	This will print the panic message and exit if `some_command` fails.
 function panic
 {
-	echo "$0: ${RED}fatal error${NC}"
+	echo "$FUNCNAME: ${RED}fatal error${NC}"
 	exit -1
 }
-
-
 
 # This makes it so every function has a "pre-declaration" of all the functions
 main "$@"

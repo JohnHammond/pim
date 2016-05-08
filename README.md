@@ -8,14 +8,19 @@ This is entirely for the purpose of experimentation and education; I'll be follo
 For the time being, I'll use this [`README.md`](README.md) page to archive a list of pages that I would like to read more about through [OSDev.org]. 
 
 
-__Status:__ currently the `gcc_cross_compiler` setup script is working and it will build the cross compiler; but the script should cleaned up. Then we can move on to actually writing the kernel.
+__Status:__ _May 8th, 2016_ I have ran through all the code I had previously and updated it so that the `build_new` scripts (for [`gcc`][gcc] and [`binutils`][binutils]) now grab the latest release and version from their online host. Now the code is no longer strapped to the version I wrote it for in the past (as time goes on).
+
+Also, I have cleaned and organized the [`gcc_cross_compiler`](gcc_cross_compiler) script so it is now a bit more orderly. Everything up until that point works smoothly. 
+
+I have written the code for the [Bare Bones] tutorial and that is in the [`bare_bones`](bare_bones) directory, although I have not yet compiled the code and played with it. 
 
 --------
 
 Current Page:
 -----
 
-__[GCC Cross-Compiler](http://wiki.osdev.org/GCC_Cross-Compiler)__
+__[Bare Bones]__
+
 
 
 --------
@@ -23,7 +28,7 @@ __[GCC Cross-Compiler](http://wiki.osdev.org/GCC_Cross-Compiler)__
 Ordered Steps:
 --------------
 
-1. [Build newest version](build_new_gcc/) of [`gcc`][gcc].
+1. [Build newest version](build_new_gcc/) of [`gcc`][gcc] and [`binutils`][binutils] (two separate folders)
 2. [Create a new gcc cross compiler](gcc_cross_compiler/).
 
 --------
@@ -39,7 +44,7 @@ More Readings to do...
 * [Building GCC](http://wiki.osdev.org/Building_GCC)
 * [GCC](http://wiki.osdev.org/GCC)
 * [Getting Started](http://wiki.osdev.org/Getting_Started)
-* [Bare Bones](http://wiki.osdev.org/Bare_Bones)
+* [Bare Bones]
 * [Boot Sequence](http://wiki.osdev.org/Boot_Sequence)
 * [Tutorials](http://wiki.osdev.org/Tutorials)
 * [What order should I make things in?](http://wiki.osdev.org/What_order_should_I_make_things_in)
@@ -50,4 +55,6 @@ More Readings to do...
 [operating system]: https://en.wikipedia.org/wiki/Operating_system
 [OSDev.org]: http://osdev.org 
 [StewieOS]: https://github.com/Caleb1994/StewieOS
-[GCC]: https://gcc.gnu.org/
+[gcc]: https://gcc.gnu.org/
+[Bare Bones]: http://wiki.osdev.org/Bare_Bones
+[binutils]: https://www.gnu.org/software/binutils/

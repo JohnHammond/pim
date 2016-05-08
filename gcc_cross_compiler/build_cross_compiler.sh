@@ -17,94 +17,18 @@ RED=`tput setaf 1`							# code for red console text
 GREEN=`tput setaf 2`						# code for green text
 NC=`tput sgr0`								# Reset the text color
 
-# Dependencies variables...
-DEPENDENCIES="libgmp3-dev libmpfr-dev libmpc-dev"
-
-# This function is taken directly from the `build_new_gcc` script in the 
-# corresponding folder
-function install_dependencies(){
-
-	echo "$0: ${GREEN}Downloading all necessary dependencies...${NC}"
-	echo "$0: ${GREEN}Please supply your password for sudo if you haven't already.${NC}"
-
-	sudo apt-get update || panic
-	sudo apt-get install $DEPENDENCIES || panic
-
-}
-
-# This function is taken directly from the `build_new_gcc` script in the 
-# corresponding folder
-function download_gcc_source(){
-
-	echo "$0: ${GREEN}Downloading gcc_5.3.0 source package...${NC}"
-	wget -nc "ftp://mirrors-usa.go-parts.com/gcc/releases/gcc-5.3.0/gcc-5.3.0.tar.gz" || panic
-}
-
-# This function is taken directly from the `build_new_binutils` script in the 
-# corresponding folder
-function download_binutils_source(){
-
-	echo "$0: ${GREEN}Downloading binutils 2.26 source package...${NC}"
-	wget -nc "http://ftp.gnu.org/gnu/binutils/binutils-2.26.tar.gz" || panic
-}
-
-
-function prepare_directories(){
-
-	echo "$0: ${GREEN}Making and moving into an /opt/ folder in your home directory..${NC}"
-
-	export PREFIX="$HOME/opt/cross"
-	export TARGET=i686-elf
-	export PATH="$PREFIX/bin:$PATH"
-
-	mkdir -p $PREFIX || panic
-	mkdir -p $HOME/opt/build-binutils || panic
-	mkdir -p $HOME/opt/build-gcc || panic
-
-	cd $HOME/opt
-}
-
-# This function is taken directly from the `build_new_gcc` script in the 
-# corresponding folder
-function extract_gcc(){
-
-	echo "$0: ${GREEN}Extracting the gcc source package ... ${NC}"
-	
-	if [ ! -d "gcc-5.3.0" ]; then
-		gunzip gcc-5.3.0.tar.gz || panic
-		tar xfv gcc-5.3.0.tar || panic
-	fi
-}
-
-# This function is taken directly from the `build_new_binutils` script in the 
-# corresponding folder
-function extract_binutils(){
-
-	echo "$0: ${GREEN}Extracting the binutils 2.26 package ... ${NC}"
-	
-	if [ ! -d "binutils-2.26" ]; then
-		gunzip binutils-2.26.tar.gz || panic
-		tar xfv binutils-2.26.tar || panic
-	fi
-}
-
 # THIS FUNCTION IS MODIFIED FROM `build_new_binutils`:
-#   it has new flags for the configure script, the target and other options
+#   it has new flags for the configure script, the target and the NEW PREFIX
 function build_binutils(){
 
-	echo "$0: ${GREEN}Beginning to build binutils... ${NC}"
-	# echo "$0: ${GREEN} This is going to take a while. Get comfortable! :D ${NC}"
-	
-	# I use the same prefix as the gcc folder because they are intertwined...
-	
-	cd ~/opt/build-binutils || panic
-	../binutils-2.26/configure --target="$TARGET" --prefix="$PREFIX" --with-sysroot --disable-nls --disable-werror || panic
+	echo "$FUNCNAME: ${GREEN}Beginning to build binutils... ${NC}"
+
+	cd ~/opt/build-binutils
+	rm -rf ~/opt/build-binutils/* # The makefiles may be broken; clean it all up
+	../$BINUTILS_VERSION/configure --target=i686-elf --prefix="$PREFIX" --with-sysroot --disable-nls --disable-werror
 
 	# --disable-nls tells binutils not not include native language support. This is basically optional, but reduces dependencies and compile time. It will also result in English-language diagnostics, 
 	# --with-sysroot tells binutils to enable sysroot support in the cross-compiler by pointing it to a default empty directory
-
-	# Clean anything that might already be there...
-	sudo make distclean
 
 
 	make || panic
@@ -116,32 +40,58 @@ function build_binutils(){
 #   it also only makes the necessary components, not the entire package
 function build_gcc(){
 
-	echo "$0: ${GREEN}Beginning to build gcc... ${NC}"
-	echo "$0: ${GREEN} This is going to take a while. Get comfortable! :D ${NC}"
+	echo "$FUNCNAME: ${GREEN}Beginning to build gcc... ${NC}"
+	echo "$FUNCNAME: ${GREEN} This is going to take a while. Get comfortable! :D ${NC}"
 
-	cd ~/opt/build-gcc || panic
-	../gcc-5.3.0/configure --target="$TARGET" --prefix="$PREFIX" --disable-nls --enable-languages=c,c++ --without-headers || panic
-
-	# --disable-nls tells binutils not not include native language support. This is basically optional, but reduces dependencies and compile time. It will also result in English-language diagnostics, 
-	# --enable-languages tells GCC to not to compile all the other language frontends it supports, but only C (and optionally C++).
-	# --without-headers tells GCC not to rely on any C library (standard or runtime) being present for the target. 
-
-	# Clean anything that might already be there...
-	sudo make distclean
-
-	# I use -j8 to use 8 threads; make it go a lot faster than just 1 thread!
-	make -j8 || panic
-
+	cd ~/opt/build-gcc
+	rm -rf ~/opt/build-gcc/* # The makefiles may be broken; clean it all up
+	../$GCC_VERSION/configure --target=i686-elf --prefix="$PREFIX" --disable-nls --enable-languages=c,c++ --without-headers || panic
+	
 	# For the cross-compiler we just make things that are only necessary.
 	make all-gcc || panic
 	make all-target-libgcc || panic
 	make install-gcc || panic
-	make install-target || panic
+	make install-target-libgcc || panic
+
+
 }
 
+# This is stolen straight from the build_binutils.sh script.
+function determine_latest_binutils_version(){
+
+	echo "$FUNCNAME: ${GREEN}Determining the latest binutils version... ${NC}"
+	FOUND=`lynx --dump "http://ftp.gnu.org/gnu/binutils/"|tail -n 1|awk '{print $2}'`
+	BINUTILS_URL=`echo $FOUND|cut -d "/" -f1,2,3,4,5`
+	BINUTILS_VERSION=`echo $FOUND|cut -d "/" -f6|cut -d "." -f1,2`
+	echo "$FUNCNAME: ${GREEN}Latest binutils version found to be $BINUTILS_VERSION!${NC}"
+}
+
+# This is stolen straight from the build_gcc.sh script.
+function determine_latest_gcc_version(){
+
+	echo "$FUNCNAME: ${GREEN}Determining the latest GCC version... ${NC}"
+	GCC_URL=`lynx --dump "http://mirrors-usa.go-parts.com/gcc/releases/"|tail -n 1|awk '{print $2}'`
+	GCC_VERSION=`echo $GCC_URL|rev|cut -d "/" -f2|rev`
+	echo "$FUNCNAME: ${GREEN}Latest GCC version found to be $GCC_VERSION!${NC}"
+}
+
+function prepare_directories(){
+
+	echo "$FUNCNAME: ${GREEN}Making and moving into an /opt/ folder in your home directory..${NC}"
+
+	export PREFIX="$HOME/opt/cross"
+	export TARGET=i686-elf
+	export PATH="$PREFIX/bin:$PATH"
+
+	mkdir -p $PREFIX || panic
+	mkdir -p $HOME/opt/build-binutils || panic
+	mkdir -p $HOME/opt/build-gcc || panic
+
+	cd $HOME/opt
+}
 function add_cross_to_path(){
 
-	echo "$0: ${GREEN}Now adding the cross-compiler to the PATH... ${NC}"
+	echo "$FUNCNAME: ${GREEN}Now adding the cross-compiler to the PATH... ${NC}"
 	export PATH="$HOME/opt/cross/bin:$PATH"
 
 	echo 'export PATH="$HOME/opt/cross/bin:$PATH"' >> ~/.bashrc
@@ -149,44 +99,25 @@ function add_cross_to_path(){
 
 function main()
 {
-	echo "$0: ${GREEN}Preparing to build cross compiler!${NC}"
 
-	export PREFIX="$HOME/opt/cross"
-	# export TARGET=i686-elf
-	export PATH="$PREFIX/bin:$PATH"
+	determine_latest_binutils_version
+	determine_latest_gcc_version
 
-	cd ~/opt/build-binutils
-	rm -rf ~/opt/build-binutils/* # The makefiles may be broken; clean it all up
-	../binutils-2.26/configure --target=i686-elf --prefix="$PREFIX" --with-sysroot --disable-nls --disable-werror
-	
-	make || panic
-	make install || panic
+	echo "$FUNCNAME: ${GREEN}Preparing to build cross compiler!${NC}"
+	echo "$FUNCNAME: ${GREEN}This whole script operates under the assumption that you have${NC}"
+	echo "$FUNCNAME: ${GREEN}ran the two scripts to download and build the latest binutils ${NC}"
+	echo "$FUNCNAME: ${GREEN}and gcc versions. Their files must be accessible.${NC}"
 
 
-	cd ~/opt/build-gcc
-	rm -rf ~/opt/build-gcc/* # The makefiles may be broken; clean it all up
-	../gcc-5.3.0/configure --target=i686-elf --prefix="$PREFIX" --disable-nls --enable-languages=c,c++ --without-headers || panic
-	make all-gcc || panic
-	make all-target-libgcc || panic
-	make install-gcc || panic
-	make install-target-libgcc || panic
+	prepare_directories
 
-	
-	# install_dependencies
-	# prepare_directories
+	build_binutils
+	build_gcc
 
-	# download_gcc_source
-	# download_binutils_source
-	# extract_gcc
-	# extract_binutils
-	
+	add_cross_to_path
 
-	# build_binutils
-	# build_gcc
 
-	# add_cross_to_path
-
-	echo "$0: ${GREEN}GCC successfully built!${NC}"
+	echo "$FUNCNAME: ${GREEN}The cross-compiler has been successfully built!${NC}"
 
 	exit 0
 }
@@ -199,10 +130,9 @@ function main()
 # 	This will print the panic message and exit if `some_command` fails.
 function panic
 {
-	echo "$0: ${RED}fatal error${NC}"
+	echo "$FUNCNAME: ${RED}fatal error${NC}"
 	exit -1
 }
-
 
 
 # This makes it so every function has a "pre-declaration" of all the functions

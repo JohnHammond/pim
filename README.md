@@ -12,7 +12,7 @@ __Status:__ _May 8th, 2016_ I have ran through all the code I had previously and
 
 Also, I have cleaned and organized the [`gcc_cross_compiler`](gcc_cross_compiler) script so it is now a bit more orderly. Everything up until that point works smoothly. 
 
-I have written the code for the [Bare Bones] tutorial and that is in the [`bare_bones`](bare_bones) directory, although I have not yet compiled the code and played with it. 
+I have written the code for the [Bare Bones] tutorial and that is in the [`bare_bones`](01_bare_bones) directory, although I have not yet compiled the code and played with it. 
 
 --------
 
